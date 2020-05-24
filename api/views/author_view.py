@@ -13,4 +13,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Author.objects.all()
 
-    
+    @action(methods=['delete'], detail=False, permission_classes=[IsAuthenticated])
+    def bulk_delete(self, request, **kwargs):
+        Author.objects.all().delete()
+        return Response(dict(success=True), status=200)

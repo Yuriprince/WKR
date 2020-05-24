@@ -8,13 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 class InfoSourceViewSet(viewsets.ModelViewSet):
     queryset = InfoSource.objects.all()
     serializer_class = SourceSerializer
+    #permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return InfoSource.objects.filter(admin_id = self.request.user.id)
+        return InfoSource.objects.all()
 
 
     @action(methods=['delete'], detail=False, permission_classes=[IsAuthenticated])
     def bulk_delete(self, request, **kwargs):
-        InfoSource.objects.filter(admin_id = request.user.id).delete()
+        InfoSource.objects.all().delete()
         return Response(dict(success=True), status=200)
     

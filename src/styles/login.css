@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'header';
+  src: url('../fonts/Baloo_Paaji_2/BalooPaaji2-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'header2';
+  src: url('../fonts/Montserrat/Montserrat-Medium.ttf');
+}
+
+
+#logincontainer {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+  Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: rgb(197, 197, 197);
+  color: rgb(0, 140, 255) ;
+  position: fixed;
+  /* фиксированное положение */
+  top: 0; /*эти 4 свойства дают 100%-ное заполнение*/
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+#login{
+  padding: 20px;
+  background-color: rgb(235, 235, 235);
+  border-radius: 5px;
+  margin: 0 auto;
+  margin-top: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 400px;
+}
+
+#login > h2, #login > button{
+  margin: 0 auto;
+}
+
+#login input {
+  border: 2px solid black;
+  /*box-shadow: 0 0 5px gray;*/
+  border-radius: 8px;
+  height: 35px;
+  font-size: 20px;
+}
+
+#login .sendbtn {
+  margin-top: 10px;
+  border: none;
+  width: 100px;
+  height: 35px;
+  font-size: 14px;
+  text-transform: uppercase;
+  background-color: rgb(0, 140, 255);
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  /*justify-content: center;*/
+}
+
+.error {
+  border: 2px solid red;
+  box-shadow: 0 0 10px red;
+}
+
+.errortext {
+  color: red;
+}
+
+.title-login {
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.subtitle1-login {
+  font-family: 'header';
+  font-size: 70px;
+  color: rgb(0, 140, 255);
+  height: 80px;
+  margin: 0;
+}
+
+.subtitle2-login {
+  font-family: 'header2';
+  font-size: 50px;
+  /*margin-top: 33px;*/
+  color: black;
+  height: 80px;
+  margin: 0;
+  margin-top: 33px;
+}

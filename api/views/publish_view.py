@@ -8,13 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 class PublishInfoViewSet(viewsets.ModelViewSet):
     queryset = PublishInfo.objects.all()
     serializer_class = PublishSerializer
-
+    permission_classes = (IsAuthenticated, )
+    
     def get_queryset(self):
-        return PublishInfo.objects.filter(user_id = self.request.user.id)
+        return PublishInfo.objects.all()
 
 
     @action(methods=['delete'], detail=False, permission_classes=[IsAuthenticated])
     def bulk_delete(self, request, **kwargs):
-        PublishInfo.objects.filter(user_id = request.user.id).delete()
+        PublishInfo.objects.all().delete()
         return Response(dict(success=True), status=200)
     

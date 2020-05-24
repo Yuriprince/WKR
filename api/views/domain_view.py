@@ -8,13 +8,14 @@ from rest_framework.permissions import IsAuthenticated
 class DomainViewSet(viewsets.ModelViewSet):
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
-
+    permission_classes = (IsAuthenticated, )
+    
     def get_queryset(self):
-        return Domain.objects.filter(user_id = self.request.user.id)
+        return Domain.objects.all()
 
 
     @action(methods=['delete'], detail=False, permission_classes=[IsAuthenticated])
     def bulk_delete(self, request, **kwargs):
-        Domain.objects.filter(user_id = request.user.id).delete()
+        Domain.objects.all().delete()
         return Response(dict(success=True), status=200)
     
