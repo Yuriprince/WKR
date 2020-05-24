@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
     
     def get_queryset(self):
         return Category.objects.all()

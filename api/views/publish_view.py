@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 class PublishInfoViewSet(viewsets.ModelViewSet):
     queryset = PublishInfo.objects.all()
     serializer_class = PublishSerializer
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
     
     def get_queryset(self):
         return PublishInfo.objects.all()

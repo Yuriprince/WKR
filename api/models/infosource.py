@@ -8,6 +8,7 @@ from .publish_info import PublishInfo
 class InfoSource(models.Model):
     annotation = models.CharField(max_length=255)
     language_context = models.CharField(max_length=40)
+    description = models.CharField(max_length=255)
     link_url = models.CharField(max_length=255)
     admin = models.ForeignKey(to=User, on_delete=models.CASCADE)
     author = models.ForeignKey(to=Author, on_delete=models.CASCADE)

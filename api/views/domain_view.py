@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 class DomainViewSet(viewsets.ModelViewSet):
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
     
     def get_queryset(self):
         return Domain.objects.all()

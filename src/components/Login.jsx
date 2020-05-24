@@ -10,7 +10,7 @@ const handleLogin = (userName, password, SetLoggedUser, setError) => {
   }
   const url = `${host}/token-auth/`;
   axios.post(url, data).then(response => response.data).then(function (result) {
-
+    localStorage.setItem('currentUser', data.username);
     localStorage.setItem('token', result.access);
     localStorage.setItem('refresh_token', result.refresh);
     localStorage.setItem('login_date', new Date());

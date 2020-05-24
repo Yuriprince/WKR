@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = (IsAuthenticated, )
+    #permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Author.objects.all()
