@@ -9,4 +9,4 @@ class AdminViewSet(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
 
     def get_queryset(self):
-        return User.objects.filter(id = self.request.user.id)
+        return User.objects.all()
