@@ -20,6 +20,7 @@ const  Admin = (props) => {
   const [publishArray, setPublishArray] = useState([]);
   const [isDrop, setIsDrop] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
+  const [currentpage, setCurrentPage] = useState(0);
 
   const closeDialog = () => {
     setIsOpen(false);  
@@ -36,6 +37,49 @@ const  Admin = (props) => {
   const closeDrop = (value) => {
     if((value !== 'nobody out') && (value !== 'small2'))
       setIsDrop(false);
+  }
+
+  const getPages = (result) => {
+
+    let res = result.length !== 0 ? result : [];
+  
+    //let data_sampling = [];
+
+    let elements = result.length / 10;
+    let mypages  = [];
+  
+    if(!Number.isInteger(elements))
+    {
+      elements = Math.trunc(elements);
+      elements++;
+    }
+  
+    for(let i = 1; i <= elements; i++) {
+      mypages.push(i);
+    }
+    console.log(mypages);
+    return mypages;
+  }
+  
+  const getPagingProducts = (koef, result) => {
+    let numbers = result.length / 10;
+    let start   = koef*10;
+    let end     = koef*10 + 10 - 1;
+    let final_sampling = [];
+    console.log("result" + result);
+    console.log("start " + start);
+    console.log("end" + end);
+  
+
+    result.forEach(function(item, i) {
+      if((i >= start) && (i< end))  {
+        final_sampling.push(item);
+      }
+    });
+  
+    let sourceArray = final_sampling;
+  
+    return sourceArray;
   }
 
   useEffect(() => {
@@ -82,8 +126,8 @@ const  Admin = (props) => {
             <p class="rescount">Найдено результатов: {srcArray.length}</p>
   
             {
-              srcArray.length > 0 ?
-              srcArray.map(p => (
+              getPagingProducts(currentpage, srcArray) > 0 ?
+              getPagingProducts(currentpage, srcArray).map(p => (
                 <div class="item item-admin" key={p.id}>
                   <div class="column">
                     <a href="#" class="namedoc">{p.annotation}</a>
@@ -114,12 +158,17 @@ const  Admin = (props) => {
   
   
           <div class="pages">
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#" class="lined">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">...</a>
+          {
+            getPages(srcArray).map(p => ( 
+              <a key={p} href="#" className={currentpage === p-1 ? "lined" : ""}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setCurrentPage(p-1);
+                }}
+                >{p}
+              </a>
+            ))
+          }
           </div>
         </div>
         
@@ -146,3 +195,10 @@ const  Admin = (props) => {
   );
 }
 export  default  Admin;
+
+/*            <a href="#">1</a>
+            <a href="#">2</a>
+            <a href="#" class="lined">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">...</a> */
