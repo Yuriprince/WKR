@@ -9,7 +9,7 @@ const BaseLayout = () => (
   <div className="container-fluid">
     <div className="content">
       <Route path="/" exact component={Main} />
-      <Route path="/results" component={Results} />
+      <Route path="/results/:keyword" component={Results} />
       <Route path="/login" component={Login} />
       <Route path="/admin" component={Admin} />
     </div>

@@ -4,14 +4,13 @@ import host from '../constants';
 //import '../styles/main.css';
 import '../styles/commons.css';
 
-const getResults = () => {
-  
-}
-
 const  Main = (props) => {
 
   const [text, setText] = useState('');
 
+  const getResults = () => {
+    props.history.push(`/results/${text}`);
+  }
 
   return (
     <div class="container container-main">

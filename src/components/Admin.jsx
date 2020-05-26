@@ -28,6 +28,8 @@ const  Admin = (props) => {
   const [editedSrc, setEditedSrc] = useState('');
   const [src, setSrc] = useState({});
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const logOut = () => {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
@@ -103,7 +105,7 @@ const  Admin = (props) => {
   }, [editedSrc]);
 
   useEffect(() => {
-    const srcUrl = `${host}/api/sourcesfull/`;
+    const srcUrl = `${host}/api/sourcesfull/all/`;
 
     if (isLoggedUser.logged_in) {
       axios.get(srcUrl, {
@@ -114,109 +116,114 @@ const  Admin = (props) => {
       }).then(response => {
         console.log(response.data)
         setSrcArray(response.data);
+        setIsLoaded(true);
       }).catch(function(e){
-        props.history.push('/login');
+        logOut();
       });
     } else {
-      props.history.push('/login');
+      logOut();
     }
   }, []);
 
-  return (
-    <div>
-      <header onClick={(e) => closeDrop(e.target.className)}>
-        <div class="panel">
-          <p class="domain">Re:Finder - для администратора</p>
-          <div class="search-area-admin">
-            <div class="search-field">
-              <button class="blue-btn res-btn" type="button">Найти</button>
-              <input class="blue-input admin-inp" type="text" placeholder="Искать..."/>
-            </div> 
+  if(isLoaded) {
+    return (
+      <div>
+        <header onClick={(e) => closeDrop(e.target.className)}>
+          <div class="panel">
+            <p class="domain">Re:Finder - для администратора</p>
+            <div class="search-area-admin">
+              <div class="search-field">
+                <button class="blue-btn res-btn" type="button">Найти</button>
+                <input class="blue-input admin-inp" type="text" placeholder="Искать..."/>
+              </div> 
+            </div>
+            <button type="button" onClick={() => setIsDrop(!isDrop)} className="nobody out">
+                  {user}<img className="small2" src={dropdown} 
+                  onClick={() => setIsDrop(!isDrop)} alt="drop"/></button>
           </div>
-          <button type="button" onClick={() => setIsDrop(!isDrop)} className="nobody out">
-                {user}<img className="small2" src={dropdown} 
-                onClick={() => setIsDrop(!isDrop)} alt="drop"/></button>
-        </div>
-        <div className={isDrop ? "dropdown-content block" : "dropdown-content"}>
-            <a className="logoutLink" onClick={logOut} href="#">Выход</a>
-          </div>
-      </header>
-      <main class="container container-admin" onClick={(e) => closeDrop(e.target.className)}>
-          <div class="result-items">
-            <p class="rescount">Найдено результатов: {srcArray.length}</p>
-  
+          <div className={isDrop ? "dropdown-content block" : "dropdown-content"}>
+              <a className="logoutLink" onClick={logOut} href="#">Выход</a>
+            </div>
+        </header>
+        <main class="container container-admin" onClick={(e) => closeDrop(e.target.className)}>
+            <div class="result-items">
+              <p class="rescount">Найдено результатов: {srcArray.length}</p>
+    
+              {
+                srcArray.length > 0 ?
+                getPagingProducts(currentpage, srcArray).map(p => (
+                  <div class="item item-admin" key={p.id}>
+                    <div class="column">
+                      <a href="#" class="namedoc">{p.annotation}</a>
+                      <div class="info">
+                        <p class="author_and_date">{p.author.name + " "}   
+                                                   {p.author.surname + " "} 
+                                                   {p.author.patronomyc === "-" ? "" : 
+                                                    p.author.patronomyc}, 
+                                                   {p.publish_info.publish_year + " "}</p>
+                        <p class="publish_place">{p.publish_info.publish_place}</p>
+                      </div>
+                      <p class="description">{p.description}</p>
+                      <p class="src">{p.domain}</p>
+                    </div>
+          
+                    <div class="actions">
+                      <div class="circle edit">
+                        <img class="small" src={edit} alt="edit source" 
+                         onClick={() => {setSrc(p); setIsEditItemOpen(true);}}/>
+                      </div>
+                      <div class="circle delete">
+                        <img class="small" src={delete_src} alt="delete source"/>
+                      </div>
+                    </div>
+                  </div>
+                )) :
+                <p className="white">Пока не добавлено ни одного ресурса</p>
+              }
+    
+    
+            <div class="pages">
             {
-              srcArray.length > 0 ?
-              getPagingProducts(currentpage, srcArray).map(p => (
-                <div class="item item-admin" key={p.id}>
-                  <div class="column">
-                    <a href="#" class="namedoc">{p.annotation}</a>
-                    <div class="info">
-                      <p class="author_and_date">{p.author.name + " "}   
-                                                 {p.author.surname + " "} 
-                                                 {p.author.patronomyc === "-" ? "" : 
-                                                  p.author.patronomyc}, 
-                                                 {p.publish_info.publish_year + " "}</p>
-                      <p class="publish_place">{p.publish_info.publish_place}</p>
-                    </div>
-                    <p class="description">{p.description}</p>
-                    <p class="src">{p.domain}</p>
-                  </div>
-        
-                  <div class="actions">
-                    <div class="circle edit">
-                      <img class="small" src={edit} alt="edit source" 
-                       onClick={() => {setSrc(p); setIsEditItemOpen(true);}}/>
-                    </div>
-                    <div class="circle delete">
-                      <img class="small" src={delete_src} alt="delete source"/>
-                    </div>
-                  </div>
-                </div>
-              )) :
-              <p className="white">Пока не добавлено ни одного ресурса</p>
+              getPages(srcArray).map(p => ( 
+                <a key={p} href="#" className={currentpage === p-1 ? "lined" : ""}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setCurrentPage(p-1);
+                  }}
+                  >{p}
+                </a>
+              ))
             }
-  
-  
-          <div class="pages">
-          {
-            getPages(srcArray).map(p => ( 
-              <a key={p} href="#" className={currentpage === p-1 ? "lined" : ""}
-                onClick={(event) => {
-                  event.preventDefault();
-                  setCurrentPage(p-1);
-                }}
-                >{p}
-              </a>
-            ))
-          }
+            </div>
           </div>
-        </div>
-        
-          <div class="right">
-            <p>Сортировать по:</p>
-            <select class="choose_category">
-              <option>Релевантности</option>
-              <option>Популярности</option>
-              <option>Году издания</option>
-            </select>
+          
+            <div class="right">
+              <p>Сортировать по:</p>
+              <select class="choose_category">
+                <option>Релевантности</option>
+                <option>Популярности</option>
+                <option>Году издания</option>
+              </select>
+    
+              <p>Порядок сортировки:</p>
+              <select class="choose_category">
+                <option>По возрастанию</option>
+                <option>По убыванию</option>
+              </select>
+    
+              <button class="blue-btn admin-btn" type="button"> Добавить ресурс</button>
+              <button class="blue-btn admin-btn" type="button"> Проверка ресурсов на доступность</button>
+              <button class="blue-btn admin-btn" type="button"> Поиск нерелевантных ресурсов</button>
+            </div>
+        </main>
   
-            <p>Порядок сортировки:</p>
-            <select class="choose_category">
-              <option>По возрастанию</option>
-              <option>По убыванию</option>
-            </select>
+        <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} 
+                  currentSrc={src} setEditedSrc={setEditedSrc}/>
   
-            <button class="blue-btn admin-btn" type="button"> Добавить ресурс</button>
-            <button class="blue-btn admin-btn" type="button"> Проверка ресурсов на доступность</button>
-            <button class="blue-btn admin-btn" type="button"> Поиск нерелевантных ресурсов</button>
-          </div>
-      </main>
-
-      <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} 
-                currentSrc={src} setEditedSrc={setEditedSrc}/>
-
-    </div>
-  );
+      </div>
+    );
+  } else {
+    return <></>;
+  }
 }
 export  default  Admin;
