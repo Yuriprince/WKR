@@ -2,16 +2,17 @@ import  React, { useState, useEffect } from  'react';
 import axios from 'axios';
 import host, {host2} from '../constants';
 import '../styles/commons.css';
+import "../styles/modals/modal.css";
 import edit from '../assets/icons/edit.png';
 import delete_src from '../assets/icons/trash.png';
 import dropdown from '../assets/icons/dropdown.png';
 import close from '../assets/icons/wbold_x.png';
+import EditModal from './modals/EditModal';
 
 const  Admin = (props) => {
   const [user, setUser] = useState(localStorage.getItem('currentUser'));
   const [isRefreshToken, setRefreshToken] = useState(localStorage.getItem('token'));
   const [isLoggedUser, SetLoggedUser] = useState({logged_in: isRefreshToken ? true : false,username: ''});
-  const [isOpen, setIsOpen] = useState(false);
   const [srcArray, setSrcArray] = useState([]);
   const [authorArray, setAuthorArray] = useState([]);
   const [adminArray, setAdminArray] = useState([]);
@@ -22,9 +23,10 @@ const  Admin = (props) => {
   const [isLoad, setIsLoad] = useState(false);
   const [currentpage, setCurrentPage] = useState(0);
 
-  const closeDialog = () => {
-    setIsOpen(false);  
-  }
+
+  const [isEditItemOpen, setIsEditItemOpen] = useState(false);
+  const [editedSrc, setEditedSrc] = useState('');
+  const [src, setSrc] = useState({});
 
   const logOut = () => {
     localStorage.removeItem('currentUser');
@@ -33,6 +35,20 @@ const  Admin = (props) => {
     localStorage.removeItem('login_date');
     window.location.href = `${host2}/login`; 
   }
+
+  const closeWindow = (value, setState) => {
+    if(value && (value === 'modalarea flex' || 
+       value === 'closeimg' ||
+       value === 'sendbtn-close' || 
+       value === 'center')) {
+      setState(false); 
+    }
+  } 
+
+  const closeEditDialog = (value) => closeWindow(value, setIsEditItemOpen); 
+  /*const closeDeleteAllDialog = (value) => closeWindow(value, setIsDeleteOpen);  
+  const closeDialog = (value) => closeWindow(value, setIsOpen);  
+  const closeDelItemDialog = (value) => closeWindow(value, setIsRemItemOpen); */
 
   const closeDrop = (value) => {
     if((value !== 'nobody out') && (value !== 'small2'))
@@ -83,6 +99,10 @@ const  Admin = (props) => {
   }
 
   useEffect(() => {
+    setEditedSrc('');
+  }, [editedSrc]);
+
+  useEffect(() => {
     const srcUrl = `${host}/api/sourcesfull/`;
 
     if (isLoggedUser.logged_in) {
@@ -121,12 +141,12 @@ const  Admin = (props) => {
             <a className="logoutLink" onClick={logOut} href="#">Выход</a>
           </div>
       </header>
-      <div class="container container-admin" onClick={(e) => closeDrop(e.target.className)}>
+      <main class="container container-admin" onClick={(e) => closeDrop(e.target.className)}>
           <div class="result-items">
             <p class="rescount">Найдено результатов: {srcArray.length}</p>
   
             {
-              getPagingProducts(currentpage, srcArray) > 0 ?
+              srcArray.length > 0 ?
               getPagingProducts(currentpage, srcArray).map(p => (
                 <div class="item item-admin" key={p.id}>
                   <div class="column">
@@ -145,7 +165,8 @@ const  Admin = (props) => {
         
                   <div class="actions">
                     <div class="circle edit">
-                      <img class="small" src={edit} alt="edit source"/>
+                      <img class="small" src={edit} alt="edit source" 
+                       onClick={() => {setSrc(p); setIsEditItemOpen(true);}}/>
                     </div>
                     <div class="circle delete">
                       <img class="small" src={delete_src} alt="delete source"/>
@@ -190,15 +211,12 @@ const  Admin = (props) => {
             <button class="blue-btn admin-btn" type="button"> Проверка ресурсов на доступность</button>
             <button class="blue-btn admin-btn" type="button"> Поиск нерелевантных ресурсов</button>
           </div>
-      </div>
+      </main>
+
+      <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} 
+                currentSrc={src} setEditedSrc={setEditedSrc}/>
+
     </div>
   );
 }
 export  default  Admin;
-
-/*            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#" class="lined">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">...</a> */

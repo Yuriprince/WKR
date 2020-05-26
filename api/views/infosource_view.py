@@ -10,9 +10,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 
 class MyOwnView(APIView):
-    def get(self, request):
+    def get(self, request, keyword):
+        print(keyword)
 
-        queryset = InfoSource.objects.all()
+        if(keyword == 'all'):
+            queryset = InfoSource.objects.all()
+        else:
+            queryset = InfoSource.objects.filter(annotation__contains = keyword)
         sourcesArray = []
 
         for el in queryset:

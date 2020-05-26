@@ -1,0 +1,159 @@
+body {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+  Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+i {
+  color: white;
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+.modalarea {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  z-index: 1050;
+  pointer-events: none;
+  display: none;
+  overflow-y: auto;
+}
+
+.flex {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0; 
+  right: 0;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  z-index: 1050;
+  pointer-events: auto; 
+  display: flex;
+}
+
+.center {
+  margin-top: 45px;
+  width: 400px;
+}
+
+.modalwindow{
+  padding-right: 25px;
+}
+
+.close{
+  width: 25px;
+  height: 25px;
+  background-color: rgb(56, 56, 56);
+  padding: 0;
+  margin: 0;
+  float: right;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  outline:none;
+}
+
+.close:hover {
+  background-color: rgb(143, 10, 10);
+}
+
+.close img{
+  width: inherit;
+  height: inherit;
+}
+
+.modal-content{ 
+  margin-top: 25px;
+  background-color: white;
+  padding: 0px 20px 20px 20px;
+}
+
+textarea {
+  resize: none;
+}
+
+h3 {
+  text-align: center;
+  font-size: 22px;
+  margin: 0;
+  padding: 20px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.modal_main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 19px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+label {
+  font-size: 14px;
+}
+
+select {
+  width: 100%;
+  margin: 0px;
+}
+
+.modal_main input {
+  width: 100%;
+  padding: 3px;
+  margin: 0px;
+  border: none;
+  border: 1px solid gray;
+}
+
+.modal_main textarea {
+  margin: 10px;
+  width: 100%;
+}
+
+@media(max-width: 400px) {
+  .modal_main {
+    padding: 5px;
+  }
+}
+
+.sendbtn {
+  margin-top: 10px;
+  border: none;
+  width: 100px;
+  height: 35px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: white;
+  background-color: rgb(0, 140, 255);
+  cursor: pointer;
+}
+
+.mysize {
+  border: 1px solid gray;
+  box-shadow: 0 0 5px gray;
+}
+
+.error {
+  border: 2px solid red;
+  box-shadow: 0 0 10px red;
+}
+
+.errortext {
+  color: red;
+}
+
+.p-margin {
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+.word {
+  word-wrap: break-word;
+}

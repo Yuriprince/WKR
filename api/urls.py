@@ -20,6 +20,6 @@ api_routers.register(r'authors', AuthorViewSet, basename='admins')
 
 
 urlpatterns = api_routers.urls + [
-    path('sourcesfull/', MyOwnView.as_view(), name='sources'),
+    path('sourcesfull/<keyword>/', MyOwnView.as_view(), name='sources'),
     path('refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
