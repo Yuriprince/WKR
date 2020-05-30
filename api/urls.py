@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf.urls import url
-from .views.infosource_view import InfoSourceViewSet, MyOwnView
+from .views.infosource_view import InfoSourceViewSet, MyOwnView, ParseView
 from .views.admin_view import AdminViewSet
 from .views.category_view import CategoryViewSet
 from .views.domain_view import DomainViewSet
@@ -20,6 +20,7 @@ api_routers.register(r'authors', AuthorViewSet, basename='admins')
 
 
 urlpatterns = api_routers.urls + [
+    path('parse_sources/<url_and_selector>/', ParseView.as_view(), name='sources'),
     path('sourcesfull/<keyword>/', MyOwnView.as_view(), name='sources'),
     path('refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

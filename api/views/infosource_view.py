@@ -8,6 +8,64 @@ from django.http import HttpResponse
 import json
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+import requests
+from bs4 import BeautifulSoup as BS
+from bs4.element import NavigableString
+
+class ParseView(APIView):
+    def isnt_archive_link(self, url, el):
+        if str(el).find('.zip') == -1:
+            end = url.find('.ru/')
+            return url[:end] + '.ru' + str(el)
+        else:
+            return url
+
+    def parse_page(self, url, selector):
+        r = requests.get(url)
+        html = BS(r.content, 'html.parser')
+
+        src_list = []
+        dictionary = {}
+        counter = 0
+
+        for el in html.select(selector):
+
+            if counter == 50:
+                break
+
+            if el.name == 'a':
+                caret = el.text.find('\n')
+                annotation = ''
+                if caret != -1:
+                    annotation = el.text[:caret].strip()
+                else:
+                    annotation = el.text.strip()
+                src_list.append({'title': annotation, 'url': self.isnt_archive_link(url, el.attrs['href'])})
+
+            else:
+                for subel in el.contents:
+                    if type(subel) != NavigableString:
+                        if subel.name == 'a':
+                            caret = el.text.find('\n')
+                            if caret != -1:
+                                annotation = el.text[:caret].strip()
+                            else:
+                                annotation = el.text.strip()
+                                src_list.append({'title': annotation, 'url': self.isnt_archive_link(url, subel.attrs['href'])})
+            counter +=1
+        return src_list
+                    
+    def get(self, request, url_and_selector):
+        url_my1 = 'https://cyberleninka.ru/article/c/computer-and-information-sciences_|_.list li a'
+        url_my2 = 'https://tvoireferaty.ru/informatika_|_.doc_ico > a'
+
+        #shifrstr = 'cyberleninka.ru@article@c@computer-and-information-sciences_|_.list li a'
+        #www.ukazka.ru@catalog-nauchnye-trudy-stati-otchety-lektcii-13098.html_|_.cat_one_prod h2 > a'
+        old_str = "https://{}".format(url_and_selector.replace('@', '/'))
+
+        my_list = old_str.split('_|_')
+        new_list = self.parse_page(my_list[0], my_list[1])
+        return Response(new_list)
 
 class MyOwnView(APIView):
     def get(self, request, keyword):
