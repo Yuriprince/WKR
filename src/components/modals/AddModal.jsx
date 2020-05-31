@@ -2,38 +2,8 @@ import React, { useState, useEffect } from 'react';
 import img from '../../assets/icons/wbold_x.png';
 import axios from 'axios';
 import host from '../../constants';
-/*
-const addValue = (newTask, e) => {
-  const {status, description, showError, userId, setNewTask} = newTask;
 
-  if(!description || !status) {
-    showError();
-    return false;
-  } else {
-
-    const data = {
-      description,
-      status,
-      user: userId,
-    }
-
-    const url = `${host}/api/tasks/`;
-      axios.post(url, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${isRefreshToken}`
-        },
-    }).then(response => {
-      setNewTask(response.data);
-
-    });
-    return true;
-  }
-}
-*/
-
-
-const AddModal = ({isOpen, closeModal}) => {
+const AddModal = ({isOpen, closeModal, setNewSrcs}) => {
   const [isProcessChecked, setProcessChecked] = useState('process');
 
   const [url, setUrl] = useState('');
@@ -47,14 +17,14 @@ const AddModal = ({isOpen, closeModal}) => {
   const inpRef2 = React.createRef();
 
 
-  const findSrcElems = async () => {
+  const findSrcElems = () => {
 
     const data = {
       url,
       selector
     };
     
-    await axios.post(`${host}/api/parse_sources/`, data, {
+    axios.post(`${host}/api/parse_sources/`, data, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -68,7 +38,8 @@ const AddModal = ({isOpen, closeModal}) => {
     });
   }
 
-  const addSrcs = async () => {
+  const addSrcs = () => {
+    let newArray = [];
     for(let i = 0; i < newSrcArray.length; i++) {
       const data = {
         "annotation": newSrcArray[i].title,
@@ -81,7 +52,9 @@ const AddModal = ({isOpen, closeModal}) => {
         "publish_info": null
       }
 
-      await axios.post(`${host}/api/sources/`, data, {
+      newArray.push(data);
+
+      axios.post(`${host}/api/sources/`, data, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -90,6 +63,7 @@ const AddModal = ({isOpen, closeModal}) => {
         console.log(`Added ${i} value`);
       });
     }
+    setNewSrcs(newArray);
   }
 
   const setCheck = (value) => setProcessChecked(value);
@@ -150,6 +124,3 @@ const AddModal = ({isOpen, closeModal}) => {
 }
 
 export default AddModal;
-
-
-

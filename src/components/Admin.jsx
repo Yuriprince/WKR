@@ -11,23 +11,13 @@ import EditModal from './modals/EditModal';
 import AddModal from './modals/AddModal';
 
 const  Admin = (props) => {
-  const [user, setUser] = useState(localStorage.getItem('currentUser'));
-  const [isRefreshToken, setRefreshToken] = useState(localStorage.getItem('token'));
-  const [isLoggedUser, SetLoggedUser] = useState({logged_in: isRefreshToken ? true : false,username: ''});
   const [srcArray, setSrcArray] = useState([]);
-  const [authorArray, setAuthorArray] = useState([]);
-  const [adminArray, setAdminArray] = useState([]);
-  const [domainArray, setDomainArray] = useState([]);
-  const [categoryArray, setCategoryArray] = useState([]);
-  const [publishArray, setPublishArray] = useState([]);
   const [isDrop, setIsDrop] = useState(false);
-  const [isLoad, setIsLoad] = useState(false);
   const [currentpage, setCurrentPage] = useState(0);
-
   const [isOpen, setIsOpen] = useState(false);
   const [isEditItemOpen, setIsEditItemOpen] = useState(false);
   const [editedSrc, setEditedSrc] = useState('');
-  const [newSrc, setNewSrc] = useState('');
+  const [newSrcs, setNewSrcs] = useState([]);
   const [src, setSrc] = useState({});
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -117,11 +107,11 @@ const  Admin = (props) => {
   useEffect(() => {
     const srcUrl = `${host}/api/sourcesfull/all/`;
 
-    if (isLoggedUser.logged_in) {
+    if (localStorage.getItem('token')) {
       axios.get(srcUrl, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${isRefreshToken}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       }).then(response => {
         //alert(response.data);
@@ -134,6 +124,19 @@ const  Admin = (props) => {
       logOut();
     }
   }, []);
+
+  useEffect(() => {
+    let sources = [];
+    srcArray.map(p => {
+      sources.push(p);
+    });
+
+    if(newSrcs.length > 0) {
+      const newArray = sources.concat(newSrcs);
+      setSrcArray(newArray);
+    }
+    setNewSrcs('');
+  }, [newSrcs]);
 
   if(isLoaded) {
     return (
@@ -148,7 +151,7 @@ const  Admin = (props) => {
               </div> 
             </div>
             <button type="button" onClick={() => setIsDrop(!isDrop)} className="nobody out">
-                  {user}<img className="small2" src={dropdown} 
+                  {localStorage.getItem('currentUser')}<img className="small2" src={dropdown} 
                   onClick={() => setIsDrop(!isDrop)} alt="drop"/></button>
           </div>
           <div className={isDrop ? "dropdown-content block" : "dropdown-content"}>
@@ -231,7 +234,7 @@ const  Admin = (props) => {
               <button class="blue-btn admin-btn" type="button"> Поиск нерелевантных ресурсов</button>
             </div>
         </main>
-        <AddModal isOpen={isOpen} closeModal={closeDialog}/>
+        <AddModal isOpen={isOpen} closeModal={closeDialog} setNewSrcs={setNewSrcs}/>
         <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} currentSrc={src}/>
       </div>
     );

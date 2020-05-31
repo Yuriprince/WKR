@@ -68,6 +68,11 @@ const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
   useEffect(() => {
     setMyСlassName('mysize');
     setErrorText('');
+
+    
+
+
+
     /*setText(currentTask.description);
     setIsProcessChecked(currentTask.status);*/
   },[isOpen, currentTask]);
