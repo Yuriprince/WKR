@@ -3,40 +3,22 @@ import img from '../../assets/icons/wbold_x.png';
 import axios from 'axios';
 import host from '../../constants';
 
-/*const editValue = (e, editTask) => {
-
-  const {currentId, status, description, close, showError, userId, setEditedTask} = editTask;
-
-  if(!description || !status) {
-    showError();
-  } else {
-    const url = `${host}/api/tasks/${currentId}/`;
-    axios.put(url, {
-        id: currentId,
-        description: description,
-        status: status,
-        user: userId,
-      }, 
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')
-        },
-      }
-    ).then(response => {
-      setEditedTask(response.data);
-    });
-
-    close(`${e.target.className}-close`);
-  }
-}*/
-
-const EditModal = ({isOpen, closeModal, currentSrc}) => {
+const EditModal = ({isOpen, closeModal, currentSrc, domains, categories, authors, publishes, setEditSrc}) => {
 
   const [isProcessChecked, setIsProcessChecked] = useState('process');
   const [text, setText] = useState('');
   const [myСlassName, setMyСlassName] = useState('mysize');
   const [errorText, setErrorText] = useState('');
+
+  const [domainId, setDomainId] = useState(0);
+  const [categoryId, setCategoryId] = useState(0);
+  const [authorId, setAuthorId] = useState(0);
+  const [publishId, setPublishId] = useState(0);
+
+  const [newAnnotation, setNewAnnotation] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+
 
   const setError = () => {
     setMyСlassName('error');
@@ -45,32 +27,53 @@ const EditModal = ({isOpen, closeModal, currentSrc}) => {
 
   const setCheck = (value) => setIsProcessChecked(value);
 
-  const clickEditVal = (e) => {
-    
-    /*const editTask = {
-      currentId: currentSrc.id,
-      status: isProcessChecked,
-      description: text,
-      close: closeModal,
-      showError: setError,
-      userId: currentSrc.user,
-      setEditedTask,
-    }
+  const editSrc = () => {
+    const data = {
+      "annotation": newAnnotation,
+      "description": newDescription,
+      "link_url": newUrl,
+      "admin": 1,
+      "author": authorId ? authorId : null,
+      "domain": domainId ? domainId : null,
+      "category": categoryId ? categoryId : null,
+      "publish_info": publishId ? publishId : null
+    };
 
-    if(isProcessChecked === currentSrc.status && 
-       text === currentSrc.description) {
-      closeModal(`${e.target.className}-close`);
-    } else {
-      editValue(e, editTask);
-    }*/
+    const url = `${host}/api/sources/${currentSrc.id}/`;
+
+    axios.put(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+    }).then(response => {
+      setEditSrc(response.data);
+    });
   }
+
+  useEffect(() => {
+    const defDom = currentSrc.domain !== null ? currentSrc.domain/*.id*/ : 0;
+    const defCat = currentSrc.category !== null ? currentSrc.category/*.id*/ : 0;
+    const defAuth = currentSrc.author !== null ? currentSrc.author/*.id*/ : 0;
+    const defPub = currentSrc.publish_info !== null ? currentSrc.publish_info/*.id*/ : 0;
+    setDomainId(defDom);
+    setCategoryId(defCat);
+    setAuthorId(defAuth);
+    setPublishId(defPub);
+
+
+  }, []);
   
   useEffect(() => {
     setMyСlassName('mysize');
     setErrorText('');
-    console.log(currentSrc);
+    //console.log(currentSrc);
+    console.log(domains);
+    console.log(categories);
 
-    
+    setNewAnnotation(currentSrc.annotation);
+    setNewDescription(currentSrc.description);
+    setNewUrl(currentSrc.link_url);
 
 
 
@@ -90,45 +93,56 @@ const EditModal = ({isOpen, closeModal, currentSrc}) => {
           </div>
           <div className="modal_main">
             <label>Аннотация:</label>
-            <input type="text" defaultValue={currentSrc.annotation}/>
+            <input type="text" defaultValue={currentSrc.annotation}
+              onChange={(e) => setNewAnnotation(e.target.value)}/>
             <label>Описание:</label>
-            <input type="text" defaultValue={currentSrc.description}/>
+            <input type="text" defaultValue={currentSrc.description}
+              onChange={(e) => setNewDescription(e.target.value)}/>
             <label>Ссылка на ресурс:</label>
-            <input type="text" value={currentSrc.link_url}/>
+            <input type="text" defaultValue={currentSrc.link_url}
+              onChange={(e) => setNewUrl(e.target.value)}/>
             
             <label>Автор:</label>
-            <select className="choose_category">
-              <option value="" selected disabled hidden>Не выбрано</option>
-              <option>Релевантности</option>
-              <option>Популярности</option>
-              <option>Году издания</option>
+            <select className="choose_category" onChange={(e) => setAuthorId(e.target.value)}>
+              <option value="0">Не выбрано</option>
+                {
+                  authors.map(p => (
+                    <option value={p.id} selected={authorId === p.id ? true : false} key={p.id}>{p.name} {p.surname}</option>
+                  ))
+                }
             </select>
 
             <label>Домен:</label>
             <select className="choose_category">
-            <option value="" selected disabled hidden>Не выбрано</option>
-              <option>Релевантности</option>
-              <option>Популярности</option>
-              <option>Году издания</option>
+              <option value="">Не выбрано</option>
+              {
+                domains.map(p => (
+                  <option selected={domainId === p.id ? true : false} key={p.id}>{p.name}</option>
+                ))
+              }
             </select>
 
             <label>Категория:</label>
             <select className="choose_category">
-            <option value="" selected disabled hidden>Не выбрано</option>
-              <option>Релевантности</option>
-              <option>Популярности</option>
-              <option>Году издания</option>
+              <option value="">Не выбрано</option>
+              {
+                categories.map(p => (
+                  <option selected={categoryId === p.id ? true : false} key={p.id}>{p.name}</option>
+                ))
+              }
             </select>
 
             <label>Место и год издания:</label>
             <select className="choose_category">
-              <option value="" selected disabled hidden>Не выбрано</option>
-              <option>Релевантности</option>
-              <option>Популярности</option>
-              <option>Году издания</option>
+              <option value="">Не выбрано</option>
+                {
+                  publishes.map(p => (
+                    <option selected={publishId === p.id ? true : false} key={p.id}>{p.publish_place}, {p.publish_year}</option>
+                  ))
+                }
             </select>
 
-            <button className="sendbtn" onClick={e => clickEditVal(e, currentSrc)}>Сохранить</button>
+            <button className="sendbtn" onClick={editSrc}>Сохранить</button>
             <p className="p-margin errortext">{errorText}</p>
           </div>
         </div>

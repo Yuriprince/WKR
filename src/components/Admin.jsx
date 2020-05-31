@@ -16,11 +16,18 @@ const  Admin = (props) => {
   const [currentpage, setCurrentPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isEditItemOpen, setIsEditItemOpen] = useState(false);
-  const [editedSrc, setEditedSrc] = useState('');
-  const [newSrcs, setNewSrcs] = useState([]);
   const [src, setSrc] = useState({});
   const [text, setText] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const [categories, setCategories] = useState([]);
+  const [domains, setDomains] = useState([]);
+  const [publishes, setPublishes] = useState([]);
+  const [authors, setAuthors] = useState([]);
+
+  const [newSrcs, setNewSrcs] = useState([]);
+  const [editSrc, setEditSrc] = useState({});
+  //const [isLoaded, setIsLoaded] = useState(false);
 
   const logOut = () => {
     localStorage.removeItem('currentUser');
@@ -94,12 +101,6 @@ const  Admin = (props) => {
     return sourceArray;
   }
 
-  const getDomain = (url) => {
-    const start = url.indexOf('://');
-    const end = url.indexOf('.ru/');
-    return url.substring(start, end - start);
-  }
-
   const postQuery = (param) => {
     let srcUrl;
     const keyWord = text === '' ? 'all' : text;
@@ -115,13 +116,14 @@ const  Admin = (props) => {
 
   useEffect(() => {
     const srcUrl = `${host}/api/sourcesfull/all/`;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    };
 
     if (localStorage.getItem('token')) {
       axios.get(srcUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+        headers
       }).then(response => {
         //alert(response.data);
         setSrcArray(response.data);
@@ -129,6 +131,32 @@ const  Admin = (props) => {
       }).catch(function(e){
         logOut();
       });
+
+      axios.get(`${host}/api/categories/`, {
+        headers
+      }).then(response => {
+        setCategories(response.data);
+      });
+
+      axios.get(`${host}/api/domains/`, {
+        headers
+      }).then(response => {
+        setDomains(response.data);
+      });
+
+      axios.get(`${host}/api/authors/`, {
+        headers
+      }).then(response => {
+        setAuthors(response.data);
+      });
+
+      axios.get(`${host}/api/publishes/`, {
+        headers
+      }).then(response => {
+        setPublishes(response.data);
+      });
+
+
     } else {
       logOut();
     }
@@ -144,8 +172,16 @@ const  Admin = (props) => {
       const newArray = sources.concat(newSrcs);
       setSrcArray(newArray);
     }
+
+    if(editSrc) {
+      const indexEditedSrc = sources.indexOf(src);
+      sources.splice(indexEditedSrc, 1, editSrc);
+
+      setSrcArray(sources);
+    }
+
     setNewSrcs('');
-  }, [newSrcs]);
+  }, [newSrcs, editSrc]);
 
   if(isLoaded) {
     return (
@@ -251,7 +287,9 @@ const  Admin = (props) => {
             </div>
         </main>
         <AddModal isOpen={isOpen} closeModal={closeDialog} setNewSrcs={setNewSrcs}/>
-        <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} currentSrc={src}/>
+        <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} currentSrc={src}
+         domains={domains} categories={categories}
+         authors={authors} publishes={publishes} setEditSrc={setEditSrc}/>
       </div>
     );
   } else {
