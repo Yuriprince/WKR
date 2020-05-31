@@ -64,6 +64,7 @@ const AddModal = ({isOpen, closeModal, setNewSrcs}) => {
       });
     }
     setNewSrcs(newArray);
+    closeModal('sendbtn-close');
   }
 
   const setCheck = (value) => setProcessChecked(value);
@@ -101,7 +102,7 @@ const AddModal = ({isOpen, closeModal, setNewSrcs}) => {
                       
               <p className="p-margin errortext">{errorText}</p>
 
-              <div className={newSrcArray.length > 0 && "results vis"}>
+              <div className={newSrcArray.length > 0 ? "results vis" : ""}>
               {
                 newSrcArray.map(p => (
                 <div class="item modal" key={p.id}>

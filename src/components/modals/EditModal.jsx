@@ -31,7 +31,7 @@ import host from '../../constants';
   }
 }*/
 
-const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
+const EditModal = ({isOpen, closeModal, currentSrc}) => {
 
   const [isProcessChecked, setIsProcessChecked] = useState('process');
   const [text, setText] = useState('');
@@ -48,17 +48,17 @@ const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
   const clickEditVal = (e) => {
     
     /*const editTask = {
-      currentId: currentTask.id,
+      currentId: currentSrc.id,
       status: isProcessChecked,
       description: text,
       close: closeModal,
       showError: setError,
-      userId: currentTask.user,
+      userId: currentSrc.user,
       setEditedTask,
     }
 
-    if(isProcessChecked === currentTask.status && 
-       text === currentTask.description) {
+    if(isProcessChecked === currentSrc.status && 
+       text === currentSrc.description) {
       closeModal(`${e.target.className}-close`);
     } else {
       editValue(e, editTask);
@@ -68,14 +68,15 @@ const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
   useEffect(() => {
     setMyСlassName('mysize');
     setErrorText('');
+    console.log(currentSrc);
 
     
 
 
 
-    /*setText(currentTask.description);
-    setIsProcessChecked(currentTask.status);*/
-  },[isOpen, currentTask]);
+    /*setText(currentSrc.description);
+    setIsProcessChecked(currentSrc.status);*/
+  },[isOpen, currentSrc]);
 
   return (
     <div className={isOpen ? "modalarea flex" : "modalarea"} onClick={e => closeModal(e.target.className)}>
@@ -89,41 +90,45 @@ const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
           </div>
           <div className="modal_main">
             <label>Аннотация:</label>
-            <input type="text"/>
+            <input type="text" defaultValue={currentSrc.annotation}/>
             <label>Описание:</label>
-            <input type="text"/>
+            <input type="text" defaultValue={currentSrc.description}/>
             <label>Ссылка на ресурс:</label>
-            <input type="text"/>
+            <input type="text" value={currentSrc.link_url}/>
             
             <label>Автор:</label>
-            <select class="choose_category">
+            <select className="choose_category">
+              <option value="" selected disabled hidden>Не выбрано</option>
               <option>Релевантности</option>
               <option>Популярности</option>
               <option>Году издания</option>
             </select>
 
             <label>Домен:</label>
-            <select class="choose_category">
+            <select className="choose_category">
+            <option value="" selected disabled hidden>Не выбрано</option>
               <option>Релевантности</option>
               <option>Популярности</option>
               <option>Году издания</option>
             </select>
 
             <label>Категория:</label>
-            <select class="choose_category">
+            <select className="choose_category">
+            <option value="" selected disabled hidden>Не выбрано</option>
               <option>Релевантности</option>
               <option>Популярности</option>
               <option>Году издания</option>
             </select>
 
             <label>Место и год издания:</label>
-            <select class="choose_category">
+            <select className="choose_category">
+              <option value="" selected disabled hidden>Не выбрано</option>
               <option>Релевантности</option>
               <option>Популярности</option>
               <option>Году издания</option>
             </select>
 
-            <button className="sendbtn" onClick={e => clickEditVal(e, currentTask)}>Сохранить</button>
+            <button className="sendbtn" onClick={e => clickEditVal(e, currentSrc)}>Сохранить</button>
             <p className="p-margin errortext">{errorText}</p>
           </div>
         </div>
