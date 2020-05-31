@@ -78,14 +78,22 @@ class MyOwnView(APIView):
             tempObj['description'] = el.description
             tempObj['link_url'] = el.link_url
             tempObj['admin'] = el.admin.username if el.admin != None else None
-            tempObj['author'] = {
+            tempObj['author'] = {   "id": el.author.id,
                                     "name": el.author.name,
                                     "surname": el.author.surname,
                                     "patronomyc": el.author.patronomyc,
                                 } if el.author != None else None
-            tempObj['domain'] = el.domain.url if el.domain != None else None
-            tempObj['category'] = el.category.name if el.category != None else None
+            tempObj['domain'] = {
+                                    "id": el.domain.id,
+                                    "name": el.domain.name,
+                                    "url": el.domain.url,
+                                } if el.domain != None else None
+            tempObj['category'] = {
+                                    "id": el.category.id,
+                                    "name": el.category.name,
+                                } if el.category != None else None
             tempObj['publish_info'] = {
+                                        "id": el.publish_info.id,
                                         "publish_place": el.publish_info.publish_place,
                                         "publish_year": el.publish_info.publish_year
                                       } if el.publish_info != None else None

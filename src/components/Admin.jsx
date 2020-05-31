@@ -168,9 +168,10 @@ const  Admin = (props) => {
       sources.push(p);
     });
 
-    if(newSrcs.length > 0) {
+    if(newSrcs) {
       const newArray = sources.concat(newSrcs);
       setSrcArray(newArray);
+      //setNewSrcs([]);
     }
 
     if(editSrc) {
@@ -178,10 +179,21 @@ const  Admin = (props) => {
       sources.splice(indexEditedSrc, 1, editSrc);
 
       setSrcArray(sources);
+      //setEditSrc({});
     }
 
     setNewSrcs('');
+    setEditSrc('');
+
   }, [newSrcs, editSrc]);
+
+  const getAuthor = (author) => {
+    let res = '';
+    if((author !== null) && (typeof author !== 'number')) {
+      res = `${author.name} ${author.surname} ${author.patronomyc}`;
+    }
+    return res;
+  }
 
   if(isLoaded) {
     return (
@@ -216,14 +228,11 @@ const  Admin = (props) => {
                     <div className="column">
                       <a href={p.link_url} className="namedoc">{p.annotation}</a>
                       <div className="info">
-                        { (p.author !== null && p.publish_info !== null) &&
+                        { p.author !== null &&
                         <>
-                          <p className="author_and_date">{p.author.name + " "}   
-                                  {p.author.surname + " "} 
-                                  {p.author.patronomyc === "-" ? "" : 
-                                  p.author.patronomyc}, 
-                                  {p.publish_info.publish_year + " "}</p>
-                          <p className="publish_place">{p.publish_info.publish_place}</p>
+                          <p className="author_and_date">{getAuthor(p.author)},
+                                  {p.publish_info !== null && p.publish_info.publish_year + " "}</p>
+                          <p className="publish_place">{p.publish_info !== null && p.publish_info.publish_place}</p>
                         </>
                         }
                       </div>

@@ -51,10 +51,16 @@ const EditModal = ({isOpen, closeModal, currentSrc, domains, categories, authors
     });
   }
 
+  const getAuthor = (author) => {
+    if((author !== undefined) && (author !== null) && (typeof author !== 'number'))
+      return author.id;
+    else return 0;
+  }
+
   useEffect(() => {
     const defDom = currentSrc.domain !== null ? currentSrc.domain/*.id*/ : 0;
     const defCat = currentSrc.category !== null ? currentSrc.category/*.id*/ : 0;
-    const defAuth = currentSrc.author !== null ? currentSrc.author/*.id*/ : 0;
+    const defAuth = getAuthor(currentSrc.author);
     const defPub = currentSrc.publish_info !== null ? currentSrc.publish_info/*.id*/ : 0;
     setDomainId(defDom);
     setCategoryId(defCat);
@@ -62,7 +68,7 @@ const EditModal = ({isOpen, closeModal, currentSrc, domains, categories, authors
     setPublishId(defPub);
 
 
-  }, []);
+  }, [isOpen]);
   
   useEffect(() => {
     setMyСlassName('mysize');
