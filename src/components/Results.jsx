@@ -92,17 +92,21 @@ const  Results = (props) => {
           getPagingProducts(currentpage, srcArray).map(p => (
             <div class="item item-admin" key={p.id}>
               <div class="column">
-                <a href="#" class="namedoc">{p.annotation}</a>
+                <a href={p.link_url} class="namedoc">{p.annotation}</a>
                 <div class="info">
-                  <p class="author_and_date">{p.author.name + " "}   
-                                            {p.author.surname + " "} 
-                                            {p.author.patronomyc === "-" ? "" : 
-                                              p.author.patronomyc}, 
-                                            {p.publish_info.publish_year + " "}</p>
-                  <p class="publish_place">{p.publish_info.publish_place}</p>
+                  { (p.author !== null && p.publish_info !== null) &&
+                  <>
+                    <p class="author_and_date">{p.author.name + " "}   
+                            {p.author.surname + " "} 
+                            {p.author.patronomyc === "-" ? "" : 
+                             p.author.patronomyc}, 
+                            {p.publish_info.publish_year + " "}</p>
+                    <p class="publish_place">{p.publish_info.publish_place}</p>
+                  </>
+                  }
                 </div>
                 <p class="description">{p.description}</p>
-                <p class="src">{p.domain}</p>
+                <p class="src">{p.link_url}</p>
               </div>
             </div>
           )) :

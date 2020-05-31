@@ -16,9 +16,9 @@ class ParseView(APIView):
     def isnt_archive_link(self, url, el):
         if str(el).find('.zip') == -1:
             end = url.find('.ru/')
-            return url[:end] + '.ru' + str(el)
+            return (url[:end] + '.ru' + str(el)) #.replace("https://", "")
         else:
-            return url
+            return (url) #.replace("https://", "")
 
     def parse_page(self, url, selector):
         r = requests.get(url)
@@ -26,7 +26,7 @@ class ParseView(APIView):
 
         src_list = []
         dictionary = {}
-        counter = 0
+        counter = 1
 
         for el in html.select(selector):
 
@@ -40,7 +40,7 @@ class ParseView(APIView):
                     annotation = el.text[:caret].strip()
                 else:
                     annotation = el.text.strip()
-                src_list.append({'title': annotation, 'url': self.isnt_archive_link(url, el.attrs['href'])})
+                src_list.append({'id': counter, 'title': annotation, 'url': self.isnt_archive_link(url, el.attrs['href'])})
 
             else:
                 for subel in el.contents:
@@ -51,20 +51,14 @@ class ParseView(APIView):
                                 annotation = el.text[:caret].strip()
                             else:
                                 annotation = el.text.strip()
-                                src_list.append({'title': annotation, 'url': self.isnt_archive_link(url, subel.attrs['href'])})
-            counter +=1
+                                src_list.append({'id': counter, 'title': annotation, 'url': self.isnt_archive_link(url, subel.attrs['href'])})
+            counter+=1
         return src_list
                     
-    def get(self, request, url_and_selector):
-        url_my1 = 'https://cyberleninka.ru/article/c/computer-and-information-sciences_|_.list li a'
-        url_my2 = 'https://tvoireferaty.ru/informatika_|_.doc_ico > a'
-
-        #shifrstr = 'cyberleninka.ru@article@c@computer-and-information-sciences_|_.list li a'
-        #www.ukazka.ru@catalog-nauchnye-trudy-stati-otchety-lektcii-13098.html_|_.cat_one_prod h2 > a'
-        old_str = "https://{}".format(url_and_selector.replace('@', '/'))
-
-        my_list = old_str.split('_|_')
-        new_list = self.parse_page(my_list[0], my_list[1])
+    def post(self, request):
+        url = request.data['url']
+        selector = request.data['selector']
+        new_list = self.parse_page(url, selector)
         return Response(new_list)
 
 class MyOwnView(APIView):
@@ -74,28 +68,27 @@ class MyOwnView(APIView):
         if(keyword == 'all'):
             queryset = InfoSource.objects.all()
         else:
-            queryset = InfoSource.objects.filter(annotation__contains = keyword)
+            queryset = InfoSource.objects.filter(annotation__icontains = keyword)
         sourcesArray = []
 
         for el in queryset:
             tempObj = {}
             tempObj['id'] = el.id
             tempObj['annotation'] = el.annotation
-            tempObj['language_context'] = el.language_context
             tempObj['description'] = el.description
             tempObj['link_url'] = el.link_url
-            tempObj['admin'] = el.admin.username
+            tempObj['admin'] = el.admin.username if el.admin != None else None
             tempObj['author'] = {
                                     "name": el.author.name,
                                     "surname": el.author.surname,
                                     "patronomyc": el.author.patronomyc,
-                                }
-            tempObj['domain'] = el.domain.url
-            tempObj['category'] = el.category.name
+                                } if el.author != None else None
+            tempObj['domain'] = el.domain.url if el.domain != None else None
+            tempObj['category'] = el.category.name if el.category != None else None
             tempObj['publish_info'] = {
                                         "publish_place": el.publish_info.publish_place,
                                         "publish_year": el.publish_info.publish_year
-                                      }
+                                      } if el.publish_info != None else None
 
             sourcesArray.append(tempObj)
 

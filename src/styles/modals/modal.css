@@ -157,3 +157,44 @@ select {
 .word {
   word-wrap: break-word;
 }
+
+.modal {
+  width: auto;
+}
+
+.modal .namedoc {
+  font-size: 15px;
+}
+
+.modal div.info p {
+  font-size: 12px;
+}
+
+.modal .description {
+  font-size: 12px;
+}
+
+.modal .src {
+  font-size: 12px;
+}
+
+.results {
+ background-color: gray;
+ overflow-y: auto;
+ width: 100%;
+ height: 200px;
+ visibility: hidden;
+}
+
+.invis {
+  visibility: hidden;
+}
+
+.vis {
+  visibility: visible;
+}
+
+.mar {
+  width: auto;
+  padding: 5px;
+}

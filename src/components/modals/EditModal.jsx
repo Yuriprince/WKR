@@ -85,8 +85,6 @@ const EditModal = ({isOpen, closeModal, currentTask, setEditedTask}) => {
           <div className="modal_main">
             <label>Аннотация:</label>
             <input type="text"/>
-            <label>Язык оригинала:</label>
-            <input type="text"/>
             <label>Описание:</label>
             <input type="text"/>
             <label>Ссылка на ресурс:</label>

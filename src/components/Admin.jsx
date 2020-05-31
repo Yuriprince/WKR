@@ -8,6 +8,7 @@ import delete_src from '../assets/icons/trash.png';
 import dropdown from '../assets/icons/dropdown.png';
 import close from '../assets/icons/wbold_x.png';
 import EditModal from './modals/EditModal';
+import AddModal from './modals/AddModal';
 
 const  Admin = (props) => {
   const [user, setUser] = useState(localStorage.getItem('currentUser'));
@@ -23,9 +24,10 @@ const  Admin = (props) => {
   const [isLoad, setIsLoad] = useState(false);
   const [currentpage, setCurrentPage] = useState(0);
 
-
+  const [isOpen, setIsOpen] = useState(false);
   const [isEditItemOpen, setIsEditItemOpen] = useState(false);
   const [editedSrc, setEditedSrc] = useState('');
+  const [newSrc, setNewSrc] = useState('');
   const [src, setSrc] = useState({});
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -47,7 +49,9 @@ const  Admin = (props) => {
     }
   } 
 
-  const closeEditDialog = (value) => closeWindow(value, setIsEditItemOpen); 
+  const closeEditDialog = (value) => closeWindow(value, setIsEditItemOpen);
+  const closeDialog = (value) => closeWindow(value, setIsOpen); 
+
   /*const closeDeleteAllDialog = (value) => closeWindow(value, setIsDeleteOpen);  
   const closeDialog = (value) => closeWindow(value, setIsOpen);  
   const closeDelItemDialog = (value) => closeWindow(value, setIsRemItemOpen); */
@@ -100,6 +104,12 @@ const  Admin = (props) => {
     return sourceArray;
   }
 
+  const getDomain = (url) => {
+    const start = url.indexOf('://');
+    const end = url.indexOf('.ru/');
+    return url.substring(start, end - start);
+  }
+
   useEffect(() => {
     setEditedSrc('');
   }, [editedSrc]);
@@ -114,7 +124,7 @@ const  Admin = (props) => {
           Authorization: `Bearer ${isRefreshToken}`
         }
       }).then(response => {
-        console.log(response.data)
+        //alert(response.data);
         setSrcArray(response.data);
         setIsLoaded(true);
       }).catch(function(e){
@@ -154,17 +164,21 @@ const  Admin = (props) => {
                 getPagingProducts(currentpage, srcArray).map(p => (
                   <div class="item item-admin" key={p.id}>
                     <div class="column">
-                      <a href="#" class="namedoc">{p.annotation}</a>
+                      <a href={p.link_url} class="namedoc">{p.annotation}</a>
                       <div class="info">
-                        <p class="author_and_date">{p.author.name + " "}   
-                                                   {p.author.surname + " "} 
-                                                   {p.author.patronomyc === "-" ? "" : 
-                                                    p.author.patronomyc}, 
-                                                   {p.publish_info.publish_year + " "}</p>
-                        <p class="publish_place">{p.publish_info.publish_place}</p>
+                        { (p.author !== null && p.publish_info !== null) &&
+                        <>
+                          <p class="author_and_date">{p.author.name + " "}   
+                                  {p.author.surname + " "} 
+                                  {p.author.patronomyc === "-" ? "" : 
+                                  p.author.patronomyc}, 
+                                  {p.publish_info.publish_year + " "}</p>
+                          <p class="publish_place">{p.publish_info.publish_place}</p>
+                        </>
+                        }
                       </div>
                       <p class="description">{p.description}</p>
-                      <p class="src">{p.domain}</p>
+                      <p class="src">{p.link_url}</p>
                     </div>
           
                     <div class="actions">
@@ -211,15 +225,14 @@ const  Admin = (props) => {
                 <option>По убыванию</option>
               </select>
     
-              <button class="blue-btn admin-btn" type="button"> Добавить ресурс</button>
+              <button class="blue-btn admin-btn" type="button"
+                onClick={() => setIsOpen(true)}> Добавить ресурс</button>
               <button class="blue-btn admin-btn" type="button"> Проверка ресурсов на доступность</button>
               <button class="blue-btn admin-btn" type="button"> Поиск нерелевантных ресурсов</button>
             </div>
         </main>
-  
-        <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} 
-                  currentSrc={src} setEditedSrc={setEditedSrc}/>
-  
+        <AddModal isOpen={isOpen} closeModal={closeDialog}/>
+        <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} currentSrc={src}/>
       </div>
     );
   } else {
