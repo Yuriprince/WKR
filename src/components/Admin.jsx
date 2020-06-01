@@ -10,6 +10,10 @@ import close from '../assets/icons/wbold_x.png';
 import EditModal from './modals/EditModal';
 import AddModal from './modals/AddModal';
 import DeleteItemModal from '../components/modals/DeleteModal';
+import AddAuthorModal from './modals/AddAuthorModal';
+import AddCategoryModal from './modals/AddCategoryModal';
+import AddPublishModal from './modals/AddPublishModal';
+import AddDomainModal from './modals/AddDomainModal';
 
 const  Admin = (props) => {
   const [srcArray, setSrcArray] = useState([]);
@@ -37,6 +41,11 @@ const  Admin = (props) => {
   const [sortParam, setSortParam] = useState('Аннотации');
   const [ascending, setAscending] = useState('возрастанию');
 
+  const [isAuthOpen,setIsAuthOpen] = useState(false);
+  const [isCatOpen, setIsCatOpen] = useState(false);
+  const [isPubOpen, setIsPubOpen] = useState(false);
+  const [isDomOpen, setIsDomOpen] = useState(false);
+
   const logOut = () => {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
@@ -56,7 +65,11 @@ const  Admin = (props) => {
 
   const closeEditDialog = (value) => closeWindow(value, setIsEditItemOpen);
   const closeDialog = (value) => closeWindow(value, setIsOpen); 
-  const closeDeleteDialog = (value) => closeWindow(value, setIsDeleteItemOpen); 
+  const closeDeleteDialog = (value) => closeWindow(value, setIsDeleteItemOpen);
+  const closeAuthDialog = (value) => closeWindow(value, setIsAuthOpen);
+  const closeCatDialog = (value) => closeWindow(value, setIsCatOpen);
+  const closePubDialog = (value) => closeWindow(value, setIsPubOpen);
+  const closeDomDialog = (value) => closeWindow(value, setIsDomOpen);
 
   const closeDrop = (value) => {
     if((value !== 'nobody out') && (value !== 'small2'))
@@ -307,10 +320,14 @@ const  Admin = (props) => {
     
               <button className="blue-btn admin-btn" type="button"
                 onClick={() => setIsOpen(true)}> Добавить ресурс</button>
-              <button className="blue-btn admin-btn" type="button"> Добавить домен</button>
-              <button className="blue-btn admin-btn" type="button"> Добавить категорию</button>
-              <button className="blue-btn admin-btn" type="button"> Добавить автора</button>
-              <button className="blue-btn admin-btn" type="button"> Добавить сведения об издании</button>
+              <button className="blue-btn admin-btn" type="button"
+                onClick={() => setIsDomOpen(true)}> Добавить домен</button>
+              <button className="blue-btn admin-btn" type="button"
+                onClick={() => setIsCatOpen(true)}> Добавить категорию</button>
+              <button className="blue-btn admin-btn" type="button"
+                onClick={() => setIsAuthOpen(true)}> Добавить автора</button>
+              <button className="blue-btn admin-btn" type="button"
+                onClick={() => setIsPubOpen(true)}> Добавить сведения об издании</button>
             </div>
         </main>
         <AddModal isOpen={isOpen} closeModal={closeDialog} setNewSrcs={setNewSrcs}/>
@@ -319,6 +336,10 @@ const  Admin = (props) => {
          authors={authors} publishes={publishes} setEditSrc={setEditSrc}/>
         <DeleteItemModal isOpen={isDeleteItemOpen} closeModal={closeDeleteDialog} currentSrc={src}
                          setDeleteSrc={setDeleteSrc}/>
+        <AddAuthorModal isOpen={isAuthOpen} closeModal={closeAuthDialog}/>
+        <AddCategoryModal isOpen={isCatOpen} closeModal={closeCatDialog}/>
+        <AddPublishModal isOpen={isPubOpen} closeModal={closePubDialog}/>
+        <AddDomainModal isOpen={isDomOpen} closeModal={closeDomDialog}/>
       </div>
     );
   } else {
