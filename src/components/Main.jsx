@@ -10,7 +10,8 @@ const  Main = (props) => {
   const [text, setText] = useState('');
 
   const getResults = () => {
-    props.history.push(`/results/${text}`);
+    localStorage.setItem('query', text);
+    props.history.push(`/results/`);
   }
 
   return (

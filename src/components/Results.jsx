@@ -7,9 +7,15 @@ import '../styles/commons.css';
 const  Results = (props) => {
 
   const [srcArray, setSrcArray] = useState('');
-  const [isRefreshToken, setRefreshToken] = useState(localStorage.getItem('token'));
   const [currentpage, setCurrentPage] = useState(0);
-  const [text, setText] = useState('');
+  const [text, setText] = useState(localStorage.getItem('query'));
+
+  const sortArray = ['Аннотации','Описанию', 'Релевантности', 'Автору', 'Году издания'];
+  const ascArray = ['возрастанию', 'убыванию'];
+
+  const [sortParam, setSortParam] = useState('Аннотации');
+  const [ascending, setAscending] = useState('возрастанию');
+
   const getPages = (result) => {
 
     let res = result.length !== 0 ? result : [];
@@ -53,67 +59,81 @@ const  Results = (props) => {
     return sourceArray;
   }
 
-  const postQuery = (param) => {
+  const postQuery = () => {
     let srcUrl;
-    if(typeof(param) === "object")
-      srcUrl = `${host}/api/sourcesfull/${text}/`;
+    const keyWord = text === '' ? 'all' : text;
+    /*if(typeof(param) === "object")
+      srcUrl = `${host}/api/sourcesfull/${keyWord}_${sortParam}_${ascending}/`;
     else 
-      srcUrl = `${host}/api/sourcesfull/${param}/`;
+      srcUrl = `${host}/api/sourcesfull/${param}_${sortParam}_${ascending}/`;*/
+    
+    srcUrl = `${host}/api/sourcesfull/${keyWord}_${sortParam}_${ascending}/`;
     axios.get(srcUrl).then(response => {
-      console.log(response.data)
+      console.log(response.data);
       setSrcArray(response.data);
     });
   }
 
   useEffect(() => {
-    postQuery(props.match.params.keyword);
-  }, []);
+    postQuery();
+  }, [sortParam, ascending]);
 
   return (
-    <div class="container container-res">
-      <div class="search-field">
-        <p class="subtitle1 sub1-res">RE:</p>
-        <button class="blue-btn res-btn" type="button" onClick={postQuery}>Найти</button>
-        <input class="blue-input res-inp" type="text" placeholder="Искать..."
+    <div className="container container-res">
+      <div className="search-field">
+        <p className="subtitle1 sub1-res">RE:</p>
+        <button className="blue-btn res-btn" type="button" onClick={postQuery}>Найти</button>
+        <input className="blue-input res-inp" type="text" placeholder="Искать..."
           onChange={(e) => setText(e.target.value)} />
-        <div class="sort">
+        <div className="sort">
           <p>Сортировать по:</p>
-          <select class="choose_category">
-            <option>Релевантности</option>
-            <option>Популярности</option>
-            <option>Году издания</option>
+          <select className="choose_category" onChange={(e) => setSortParam(e.target.value)}>
+          {
+            sortArray.map(p => (
+              <option value={p}>{p}</option>
+            ))
+          }
+          </select>
+
+          <p>Порядок сортировки:</p>
+          <select className="choose_category" onChange={(e) => setAscending(e.target.value)}>
+            {
+              ascArray.map(p => (
+                <option value={p}>{p}</option>
+              ))
+            }
           </select>
         </div>
       </div> 
-      <div class="result-items">
-        <p class="rescount">Найдено результатов: {srcArray.length}</p>
+      <div className="result-items">
+        <p className="rescount">Найдено результатов: {srcArray.length}</p>
         {
           srcArray.length > 0 ?
           getPagingProducts(currentpage, srcArray).map(p => (
-            <div class="item item-admin" key={p.id}>
-              <div class="column">
-                <a href={p.link_url} class="namedoc">{p.annotation}</a>
-                <div class="info">
+            <div className="item item-admin" key={p.id}>
+              <div className="column">
+                <a href={p.link_url} className="namedoc">{p.annotation}</a>
+                <div className="info">
                   { (p.author !== null && p.publish_info !== null) &&
                   <>
-                    <p class="author_and_date">{p.author.name + " "}   
+                    <p className="author_and_date">{p.author.name + " "}   
                             {p.author.surname + " "} 
                             {p.author.patronomyc === "-" ? "" : 
                              p.author.patronomyc}, 
                             {p.publish_info.publish_year + " "}</p>
-                    <p class="publish_place">{p.publish_info.publish_place}</p>
+                    <p className="publish_place">{p.publish_info.publish_place}</p>
                   </>
                   }
                 </div>
-                <p class="description">{p.description}</p>
-                <p class="src">{p.link_url}</p>
+                <p className="description">{p.description}</p>
+                <p className="src">{p.link_url}</p>
               </div>
             </div>
           )) :
           <p className="white">Пока не добавлено ни одного ресурса</p>
         }
 
-        <div class="pages">
+        <div className="pages">
         {
           getPages(srcArray).map(p => ( 
             <a key={p} href="#" className={currentpage === p-1 ? "lined" : ""}
