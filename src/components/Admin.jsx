@@ -30,7 +30,12 @@ const  Admin = (props) => {
   const [newSrcs, setNewSrcs] = useState([]);
   const [editSrc, setEditSrc] = useState({});
   const [deleteSrc, setDeleteSrc] = useState({});
-  //const [isLoaded, setIsLoaded] = useState(false);
+
+  const sortArray = ['Аннотации','Описанию', 'Релевантности', 'Автору', 'Году издания'];
+  const ascArray = ['возрастанию', 'убыванию'];
+
+  const [sortParam, setSortParam] = useState('Аннотации');
+  const [ascending, setAscending] = useState('возрастанию');
 
   const logOut = () => {
     localStorage.removeItem('currentUser');
@@ -61,9 +66,6 @@ const  Admin = (props) => {
   const getPages = (result) => {
 
     let res = result.length !== 0 ? result : [];
-  
-    //let data_sampling = [];
-
     let elements = result.length / 10;
     let mypages  = [];
   
@@ -76,7 +78,7 @@ const  Admin = (props) => {
     for(let i = 1; i <= elements; i++) {
       mypages.push(i);
     }
-    //console.log(mypages);
+
     return mypages;
   }
   
@@ -85,10 +87,6 @@ const  Admin = (props) => {
     let start   = koef*10;
     let end     = koef*10 + 10 - 1;
     let final_sampling = [];
-    /*console.log("result" + result);
-    console.log("start " + start);
-    console.log("end" + end);*/
-  
 
     result.forEach(function(item, i) {
       if((i >= start) && (i< end))  {
@@ -105,7 +103,7 @@ const  Admin = (props) => {
     let srcUrl;
     const keyWord = text === '' ? 'all' : text;
     if(typeof(param) === "object")
-      srcUrl = `${host}/api/sourcesfull/${keyWord}/`;
+      srcUrl = `${host}/api/sourcesfull/${keyWord}_${sortParam}_${ascending}/`;
     else 
       srcUrl = `${host}/api/sourcesfull/${param}/`;
     axios.get(srcUrl).then(response => {
@@ -115,23 +113,12 @@ const  Admin = (props) => {
   }
 
   useEffect(() => {
-    const srcUrl = `${host}/api/sourcesfull/all/`;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`
     };
 
     if (localStorage.getItem('token')) {
-      axios.get(srcUrl, {
-        headers
-      }).then(response => {
-        //alert(response.data);
-        setSrcArray(response.data);
-        setIsLoaded(true);
-      }).catch(function(e){
-        logOut();
-      });
-
       axios.get(`${host}/api/categories/`, {
         headers
       }).then(response => {
@@ -155,12 +142,31 @@ const  Admin = (props) => {
       }).then(response => {
         setPublishes(response.data);
       });
-
-
     } else {
       logOut();
     }
   }, []);
+
+  useEffect(() => {
+    const srcUrl = `${host}/api/sourcesfull/all_${sortParam}_${ascending}/`;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    };
+
+    if (localStorage.getItem('token')) {
+      axios.get(srcUrl, {
+        headers
+      }).then(response => {
+        setSrcArray(response.data);
+        setIsLoaded(true);
+      }).catch(function(e){
+        logOut();
+      });
+    } else {
+      logOut();
+    }
+  }, [sortParam, ascending]);
 
   useEffect(() => {
     let sources = [];
@@ -282,15 +288,21 @@ const  Admin = (props) => {
           
             <div className="right">
               <p>Сортировать по:</p>
-              <select className="choose_category">
-                <option>Релевантности</option>
-                <option>Году издания</option>
+              <select className="choose_category" onChange={(e) => setSortParam(e.target.value)}>
+                {
+                  sortArray.map(p => (
+                    <option value={p}>{p}</option>
+                  ))
+                }
               </select>
     
               <p>Порядок сортировки:</p>
-              <select className="choose_category">
-                <option>По возрастанию</option>
-                <option>По убыванию</option>
+              <select className="choose_category" onChange={(e) => setAscending(e.target.value)}>
+                {
+                  ascArray.map(p => (
+                    <option value={p}>{p}</option>
+                  ))
+                }
               </select>
     
               <button className="blue-btn admin-btn" type="button"

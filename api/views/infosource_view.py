@@ -63,12 +63,31 @@ class ParseView(APIView):
 
 class MyOwnView(APIView):
     def get(self, request, keyword):
-        print(keyword)
+        #print(keyword)
 
-        if(keyword == 'all'):
-            queryset = InfoSource.objects.all().order_by('annotation')
+        keyArr = keyword.split('_')
+        #print(keyArr)
+
+        order_val = ''
+
+        if(keyArr[1] == 'Аннотации'):
+            order_val = 'annotation'
+        elif(keyArr[1] == 'Описанию'):
+            order_val = 'description'
+        elif(keyArr[1] == 'Автору'):
+            order_val = 'author_id'
+        elif(keyArr[1] == 'Году издания'):
+            order_val = 'publish_info_id'
+        
+        if(keyArr[2] == 'убыванию'):
+            order_val = '-' + order_val
+
+        print(order_val)
+
+        if(keyArr[0] == 'all'):
+            queryset = InfoSource.objects.all().order_by(order_val)
         else:
-            queryset = InfoSource.objects.filter(annotation__icontains = keyword).order_by('annotation')
+            queryset = InfoSource.objects.filter(annotation__icontains = keyword).order_by(order_val)
         sourcesArray = []
 
         for el in queryset:
