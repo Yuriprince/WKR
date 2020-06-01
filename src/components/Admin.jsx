@@ -148,7 +148,7 @@ const  Admin = (props) => {
   }, []);
 
   useEffect(() => {
-    const srcUrl = `${host}/api/sourcesfull/all_${sortParam}_${ascending}/`;
+    const srcUrl = `${host}/api/sourcesfull/${text}_${sortParam}_${ascending}/`;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -307,7 +307,6 @@ const  Admin = (props) => {
     
               <button className="blue-btn admin-btn" type="button"
                 onClick={() => setIsOpen(true)}> Добавить ресурс</button>
-              <button className="blue-btn admin-btn" type="button"> Проверка ресурсов на доступность</button>
               <button className="blue-btn admin-btn" type="button"> Добавить домен</button>
               <button className="blue-btn admin-btn" type="button"> Добавить категорию</button>
               <button className="blue-btn admin-btn" type="button"> Добавить автора</button>

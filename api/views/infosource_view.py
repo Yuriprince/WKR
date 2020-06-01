@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 import requests
 from bs4 import BeautifulSoup as BS
 from bs4.element import NavigableString
+from rank_bm25 import BM25Okapi
+import operator
 
 class ParseView(APIView):
     def isnt_archive_link(self, url, el):
@@ -60,8 +62,22 @@ class ParseView(APIView):
         selector = request.data['selector']
         new_list = self.parse_page(url, selector)
         return Response(new_list)
-
+    
 class MyOwnView(APIView):
+
+    def getRank(self, myquery, annotation):
+        corpus = ["",annotation,""]
+
+        tokenized_corpus = [doc.split(" ") for doc in corpus]
+        bm25 = BM25Okapi(tokenized_corpus)
+
+        query = myquery
+        tokenized_query = query.split(" ")
+
+        doc_scores = bm25.get_scores(tokenized_query)
+
+        return doc_scores[1]
+
     def get(self, request, keyword):
         #print(keyword)
 
@@ -78,6 +94,8 @@ class MyOwnView(APIView):
             order_val = 'author_id'
         elif(keyArr[1] == 'Году издания'):
             order_val = 'publish_info_id'
+        elif(keyArr[1] == 'Релевантности'):
+            order_val = 'annotation'
         
         if(keyArr[2] == 'убыванию'):
             order_val = '-' + order_val
@@ -87,13 +105,14 @@ class MyOwnView(APIView):
         if(keyArr[0] == 'all'):
             queryset = InfoSource.objects.all().order_by(order_val)
         else:
-            queryset = InfoSource.objects.filter(annotation__icontains = keyword).order_by(order_val)
+            queryset = InfoSource.objects.filter(annotation__icontains = keyArr[0]).order_by(order_val)
         sourcesArray = []
 
         for el in queryset:
             tempObj = {}
             tempObj['id'] = el.id
             tempObj['annotation'] = el.annotation
+            tempObj['rank_annotation'] = self.getRank(keyArr[0], el.annotation)
             tempObj['description'] = el.description
             tempObj['link_url'] = el.link_url
             tempObj['admin'] = el.admin.username if el.admin != None else None
@@ -118,6 +137,11 @@ class MyOwnView(APIView):
                                       } if el.publish_info != None else None
 
             sourcesArray.append(tempObj)
+
+        if(keyArr[1] == 'Релевантности'):
+            #sorted(sourcesArray, key=lambda k: k['rank_annotation'])
+            #sourcesArray.sort(key='rank_annotation', reverse=False)
+            sourcesArray.sort(key=operator.itemgetter('rank_annotation'))
 
         return Response(sourcesArray)
 
