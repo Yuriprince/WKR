@@ -66,9 +66,9 @@ class MyOwnView(APIView):
         print(keyword)
 
         if(keyword == 'all'):
-            queryset = InfoSource.objects.all()
+            queryset = InfoSource.objects.all().order_by('annotation')
         else:
-            queryset = InfoSource.objects.filter(annotation__icontains = keyword)
+            queryset = InfoSource.objects.filter(annotation__icontains = keyword).order_by('annotation')
         sourcesArray = []
 
         for el in queryset:

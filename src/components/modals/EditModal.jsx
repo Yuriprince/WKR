@@ -48,22 +48,23 @@ const EditModal = ({isOpen, closeModal, currentSrc, domains, categories, authors
       },
     }).then(response => {
       setEditSrc(response.data);
+      closeModal('sendbtn-close');
     });
   }
 
-  const getAuthor = (author) => {
+  const getId = (author) => {
     if((author !== undefined) && (author !== null) && (typeof author !== 'number'))
       return author.id;
     else return 0;
   }
 
   useEffect(() => {
-    const defDom = currentSrc.domain !== null ? currentSrc.domain/*.id*/ : 0;
-    const defCat = currentSrc.category !== null ? currentSrc.category/*.id*/ : 0;
-    const defAuth = getAuthor(currentSrc.author);
-    const defPub = currentSrc.publish_info !== null ? currentSrc.publish_info/*.id*/ : 0;
+    const defDom = getId(currentSrc.domain);
+    const defCat = getId(currentSrc.category);
+    const defAuth = getId(currentSrc.author);
+    const defPub = getId(currentSrc.publish_info);
     setDomainId(defDom);
-    setCategoryId(defCat);
+    setCategoryId(defCat); 
     setAuthorId(defAuth);
     setPublishId(defPub);
 
@@ -119,31 +120,31 @@ const EditModal = ({isOpen, closeModal, currentSrc, domains, categories, authors
             </select>
 
             <label>Домен:</label>
-            <select className="choose_category">
+            <select className="choose_category" onChange={(e) => setDomainId(e.target.value)}>
               <option value="">Не выбрано</option>
               {
                 domains.map(p => (
-                  <option selected={domainId === p.id ? true : false} key={p.id}>{p.name}</option>
+                  <option value={p.id} selected={domainId === p.id ? true : false} key={p.id}>{p.name}</option>
                 ))
               }
             </select>
 
             <label>Категория:</label>
-            <select className="choose_category">
+            <select className="choose_category" onChange={(e) => setCategoryId(e.target.value)}>
               <option value="">Не выбрано</option>
               {
                 categories.map(p => (
-                  <option selected={categoryId === p.id ? true : false} key={p.id}>{p.name}</option>
+                  <option value={p.id} selected={categoryId === p.id ? true : false} key={p.id}>{p.name}</option>
                 ))
               }
             </select>
 
             <label>Место и год издания:</label>
-            <select className="choose_category">
+            <select className="choose_category" onChange={(e) => setPublishId(e.target.value)}>
               <option value="">Не выбрано</option>
                 {
                   publishes.map(p => (
-                    <option selected={publishId === p.id ? true : false} key={p.id}>{p.publish_place}, {p.publish_year}</option>
+                    <option value={p.id} selected={publishId === p.id ? true : false} key={p.id}>{p.publish_place}, {p.publish_year}</option>
                   ))
                 }
             </select>

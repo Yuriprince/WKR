@@ -9,6 +9,7 @@ import dropdown from '../assets/icons/dropdown.png';
 import close from '../assets/icons/wbold_x.png';
 import EditModal from './modals/EditModal';
 import AddModal from './modals/AddModal';
+import DeleteItemModal from '../components/modals/DeleteModal';
 
 const  Admin = (props) => {
   const [srcArray, setSrcArray] = useState([]);
@@ -16,6 +17,7 @@ const  Admin = (props) => {
   const [currentpage, setCurrentPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isEditItemOpen, setIsEditItemOpen] = useState(false);
+  const [isDeleteItemOpen, setIsDeleteItemOpen] = useState(false);
   const [src, setSrc] = useState({});
   const [text, setText] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
@@ -27,6 +29,7 @@ const  Admin = (props) => {
 
   const [newSrcs, setNewSrcs] = useState([]);
   const [editSrc, setEditSrc] = useState({});
+  const [deleteSrc, setDeleteSrc] = useState({});
   //const [isLoaded, setIsLoaded] = useState(false);
 
   const logOut = () => {
@@ -48,10 +51,7 @@ const  Admin = (props) => {
 
   const closeEditDialog = (value) => closeWindow(value, setIsEditItemOpen);
   const closeDialog = (value) => closeWindow(value, setIsOpen); 
-
-  /*const closeDeleteAllDialog = (value) => closeWindow(value, setIsDeleteOpen);  
-  const closeDialog = (value) => closeWindow(value, setIsOpen);  
-  const closeDelItemDialog = (value) => closeWindow(value, setIsRemItemOpen); */
+  const closeDeleteDialog = (value) => closeWindow(value, setIsDeleteItemOpen); 
 
   const closeDrop = (value) => {
     if((value !== 'nobody out') && (value !== 'small2'))
@@ -182,10 +182,17 @@ const  Admin = (props) => {
       //setEditSrc({});
     }
 
+    if(deleteSrc) {
+      const indexDeletedSrc = sources.indexOf(src);
+      sources.splice(indexDeletedSrc, 1);
+      setSrcArray(sources);
+  } 
+
     setNewSrcs('');
     setEditSrc('');
+    setDeleteSrc('');
 
-  }, [newSrcs, editSrc]);
+  }, [newSrcs, editSrc, deleteSrc]);
 
   const getAuthor = (author) => {
     let res = '';
@@ -246,7 +253,8 @@ const  Admin = (props) => {
                          onClick={() => {setSrc(p); setIsEditItemOpen(true);}}/>
                       </div>
                       <div className="circle delete">
-                        <img className="small" src={delete_src} alt="delete source"/>
+                        <img className="small" src={delete_src} alt="delete source"  
+                        onClick={() => {setSrc(p); setIsDeleteItemOpen(true);}}/>
                       </div>
                     </div>
                   </div>
@@ -276,7 +284,6 @@ const  Admin = (props) => {
               <p>Сортировать по:</p>
               <select className="choose_category">
                 <option>Релевантности</option>
-                <option>Популярности</option>
                 <option>Году издания</option>
               </select>
     
@@ -299,6 +306,8 @@ const  Admin = (props) => {
         <EditModal isOpen={isEditItemOpen} closeModal={closeEditDialog} currentSrc={src}
          domains={domains} categories={categories}
          authors={authors} publishes={publishes} setEditSrc={setEditSrc}/>
+        <DeleteItemModal isOpen={isDeleteItemOpen} closeModal={closeDeleteDialog} currentSrc={src}
+                         setDeleteSrc={setDeleteSrc}/>
       </div>
     );
   } else {

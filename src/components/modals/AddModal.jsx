@@ -3,6 +3,7 @@ import img from '../../assets/icons/wbold_x.png';
 import axios from 'axios';
 import host from '../../constants';
 
+
 const AddModal = ({isOpen, closeModal, setNewSrcs}) => {
   const [isProcessChecked, setProcessChecked] = useState('process');
 

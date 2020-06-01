@@ -2,6 +2,7 @@ import  React, { useState, useEffect } from  'react';
 import axios from 'axios';
 import host from '../constants';
 import '../styles/login.css';
+import { Link } from 'react-router-dom';
 
 const handleLogin = (userName, password, SetLoggedUser, setError) => {
   const data = {
@@ -58,6 +59,7 @@ const  Login = (props) => {
         <button type="button" onClick={() => handleLogin(userName,password, SetLoggedUser, setError)} 
                               className="sendbtn">ВОЙТИ</button>
         <p className="p-margin errortext">{errorText}</p>
+        <Link className="link" to="/">На главную</Link>
       </form>
     </div>
   );

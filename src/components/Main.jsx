@@ -3,6 +3,7 @@ import axios from 'axios';
 import host from '../constants';
 //import '../styles/main.css';
 import '../styles/commons.css';
+import { Link } from 'react-router-dom';
 
 const  Main = (props) => {
 
@@ -14,6 +15,7 @@ const  Main = (props) => {
 
   return (
     <div class="container container-main">
+      <Link className="link" to="/login">Администраторам</Link>
       <div class="search-area">
         <div class="title">
           <p class="subtitle1 sub1-main">RE:</p>
